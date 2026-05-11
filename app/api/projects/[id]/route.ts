@@ -14,7 +14,7 @@ type Database = {
 projects: Project[];
 };
 
-const dbPath = path.join(process.cwd(), '..', 'db.json');
+const dbPath = path.join(process.cwd(), 'db.json');
 
 async function readDatabase(): Promise<Database> {
 const raw = await fs.readFile(dbPath, 'utf8');

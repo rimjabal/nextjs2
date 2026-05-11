@@ -1,6 +1,10 @@
 'use server';
 import { revalidatePath } from 'next/cache';
-const apiBaseUrl = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000';
+const rawBaseUrl = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000';
+const normalizedBaseUrl = rawBaseUrl.replace(/\/$/, '');
+const apiBaseUrl = normalizedBaseUrl.endsWith('/api')
+? normalizedBaseUrl.slice(0, -4)
+: normalizedBaseUrl;
 export async function addProject(formData: FormData) {
 const name = formData.get('name') as string;
 const color = formData.get('color') as string;
@@ -19,6 +23,9 @@ const newName = formData.get('newName') as string;
 const currentProjectResponse = await fetch(`${apiBaseUrl}/api/projects/${id}`, {
 cache: 'no-store',
 });
+if (!currentProjectResponse.ok) {
+return;
+}
 const currentProject = await currentProjectResponse.json();
 
 await fetch(`${apiBaseUrl}/api/projects/${id}`, {

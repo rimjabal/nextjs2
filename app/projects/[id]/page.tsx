@@ -5,7 +5,13 @@ params: Promise<{ id: string }>;
 export default async function ProjectPage({ params }: Props) {
 const { id } = await params;
 
-const res = await fetch(`http://localhost:4000/projects/${id}`, {
+const rawBaseUrl = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000';
+const normalizedBaseUrl = rawBaseUrl.replace(/\/$/, '');
+const apiBaseUrl = normalizedBaseUrl.endsWith('/api')
+? normalizedBaseUrl.slice(0, -4)
+: normalizedBaseUrl;
+
+const res = await fetch(`${apiBaseUrl}/api/projects/${id}`, {
 cache: 'no-store'
 });
 if (!res.ok) {

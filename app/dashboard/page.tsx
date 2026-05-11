@@ -1,9 +1,14 @@
 import AddProjectForm from './AddProjectForm';
 import { deleteProject, renameProject } from '../actions/projects';
-const apiBaseUrl = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000';
+const rawBaseUrl = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000';
+const normalizedBaseUrl = rawBaseUrl.replace(/\/$/, '');
+const apiBaseUrl = normalizedBaseUrl.endsWith('/api')
+? normalizedBaseUrl.slice(0, -4)
+: normalizedBaseUrl;
 export default async function DashboardPage() {
 const res = await fetch(`${apiBaseUrl}/api/projects`, { cache: 'no-store' });
-const projects = await res.json();
+const data = res.ok ? await res.json() : [];
+const projects = Array.isArray(data) ? data : [];
 return (
 <div style={{ padding: '2rem' }}>
 <h1>Dashboard</h1>
